@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
 from django.contrib import messages
-from django.utils import timezone
+from datetime import datetime
 
 def index(request):
     return render(request, 'index.html')
@@ -26,7 +26,7 @@ def registrarInscripcion(request):
 
         # Convertir fecha_str a un objeto datetime
         try:
-            fecha = timezone.datetime.strptime(fecha_str, '%Y-%m-%d')
+            fecha = datetime.strptime(fecha_str, '%Y-%m-%d').date()
         except ValueError:
             messages.error(request, 'Formato de fecha inválido.')
             return render(request, 'inscripcion.html')
@@ -52,7 +52,7 @@ def registrarInscripcion(request):
             messages.error(request, 'No existe un examen para la materia y fecha proporcionadas.')
             return render(request, 'inscripcion.html')
         
-        if timezone.now() > examen.fecha_limite_inscripcion:
+        if datetime.now() > examen.fecha_limite_inscripcion:
             messages.error(request, 'La fecha límite de inscripción ha pasado.')
             return render(request, 'inscripcion.html')
 
@@ -62,7 +62,7 @@ def registrarInscripcion(request):
             return redirect('inscripcion.html')
 
         # Crear la inscripción
-        inscripcion = Inscripcion(alumno=alumno, examen=examen, fecha_inscripcion=timezone.now())
+        inscripcion = Inscripcion(alumno=alumno, examen=examen, fecha_inscripcion=datetime.now())
         inscripcion.save()
         messages.success(request, '¡Examen registrado!')
         return redirect('inscripcion.html')
