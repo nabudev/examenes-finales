@@ -70,19 +70,62 @@ def registrarInscripcion(request):
 
 
 
-def edicionInscripcion(request, id):
-    inscripcion = Inscripcion.objects.get(id=id)
-    return render(request, "editarInscripcion.html", {"Inscripcion": inscripcion})
+def edicionInscripcion(request):
+    inscripcion= Inscripcion.objects.all()
+    alumno = Alumno.objects.all()
+    examen= Examen.objects.all()
+    return render(request, "editarInscripcion.html", {"Inscripcion": inscripcion, 'alumno': alumno, 'examen': examen})
 
 
-def editarInscripcion(request, id, DNI):
-    alumno = get_object_or_404(Alumno, DNI=DNI)
-    examen = get_object_or_404(Examen, id=id)
+def editarInscripcion(request):
+    if request.method == 'POST':
+        # Extraer los datos del formulario enviado
+        DNI = request.POST['txtDNI']
+        apellido = request.POST['txtApellido']
+        nombre = request.POST['txtNombre']
+        materia_nombre = request.POST['txtMateria']
+        fecha_str = request.POST['dateFecha']
+        
+        if not all([DNI, apellido, nombre, materia_nombre, fecha_str]):
+            messages.error(request, 'Todos los campos son obligatorios.')
+            return render(request, '/')
 
-    inscripcion = Inscripcion.objects.get(id=id)
-    inscripcion.alumno = alumno
-    inscripcion.examen = examen
-    inscripcion.save()
+        # Convertir fecha_str a un objeto datetime
+        try:
+            fecha = datetime.strptime(fecha_str, '%Y-%m-%d').date()
+            #fecha_db = fecha.strftime('%Y-%m-%d')  # Convertir a formato YYYY-MM-DD para guardar en la base de datos
+        except ValueError:
+            messages.error(request, 'Formato de fecha inválido.')
+            return render(request, '/')
+        
+        # Verificar que el alumno existe y los datos coinciden
+        try:
+            alumno = Alumno.objects.get(DNI=DNI, apellido=apellido, nombre=nombre)
+        except Alumno.DoesNotExist:
+            messages.error(request, 'El alumno no existe o los datos no coinciden.')
+            return render(request, '/')
+        
+        # Verificar que la materia existe
+        try:
+            materia = Materia.objects.get(nombre=materia_nombre)
+        except Materia.DoesNotExist:
+            messages.error(request, 'La materia no existe.')
+            return render(request, '/')
+
+        # Verificar que existe un examen para la materia y la fecha dada
+        try:
+            examen = Examen.objects.get(materia=materia, fecha=fecha)
+        except Examen.DoesNotExist:
+            messages.error(request, 'No existe un examen para la materia y fecha proporcionadas.')
+            return render(request, '/')
+        
+        if Inscripcion.objects.filter(alumno=alumno, examen=examen).exists():
+            messages.error(request, 'El alumno ya está inscrito en este examen.')
+            return redirect('/')
+
+        # Crear la inscripción
+        inscripcion = Inscripcion(alumno=alumno, examen=examen, fecha_inscripcion=fecha)
+        inscripcion.save()
 
     messages.success(request, '¡Inscripcion actualizada!')
 

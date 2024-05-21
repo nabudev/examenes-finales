@@ -1,25 +1,36 @@
-{% extends "./base.html" %}
+{% extends "layouts/base.html" %}
 
 {% block title %} Gestión de examenes finales {% endblock %}
 
 {% block body %}
 <div class="row">
     <div class="col-md-4 offset-md-4">
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-dismissible alert-success">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <strong class="text-dark">{{ message }}</strong>
+        </div>
+        {% endfor %}
+        {% endif %}
         <h2>Edición de Inscripcion Examenes Finales</h2>
         <div class="card">
             <div class="card-body">
-                <form action="/editarCurso/" method="POST">{% csrf_token %}
+                <form action="/editarInscripcion/" method="POST">{% csrf_token %}
                     <div class="form-group">
-                        <input type="text" id="txtCodigo" name="txtCodigo" value="{{curso.codigo}}" class="form-control" placeholder="Código"
-                            minlength="6" maxlength="6" readonly required>
+                        <input type="text" id="txtDNI" name="txtDNI" class="form-control" placeholder="DNI" maxlength="8" required>
                     </div>
                     <div class="form-group">
-                        <input type="text" id="txtNombre" name="txtNombre" value="{{curso.nombre}}" class="form-control" placeholder="Nombre"
-                            maxlength="50" required>
+                        <input type="text" id="txtApellido" name="txtApellido" class="form-control" placeholder="Apellido" maxlength="20" required>
                     </div>
                     <div class="form-group">
-                        <input type="text" id="numCreditos" name="numCreditos" value="{{curso.creditos}}" class="form-control" min="1" max="9"
-                            value="1" required>
+                        <input type="text" id="txtNombre" name="txtNombre" class="form-control" maxlength="45" placeholder="Nombre" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="txtMateria" name="txtMateria" class="form-control" maxlength="45" placeholder="Materia" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="date" id="dateFecha" name="dateFecha" class="form-control" placeholder="Materia" required>
                     </div>
                     <div class="form-group">
                         <button type="submit" class="btn btn-success btn-block text-white">Guardar</button>

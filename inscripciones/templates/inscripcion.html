@@ -59,12 +59,12 @@
                     <tr>
                         <td>{{forloop.counter}}</td>
                         <td>{{i.alumno.DNI}}</td>
-                        <td>{{i.alumno.Apellido}}</td>
-                        <td>{{i.alumno.Nombre}}</td>
+                        <td>{{i.alumno.apellido}}</td>
+                        <td>{{i.alumno.nombre}}</td>
                         <td>{{i.examen.materia.nombre}}</td>
                         <td>{{i.examen.fecha}}</td>
-                        <td><a href="editarInscripcion/{{r.DNI}}" class="btn btn-info">Editar</a></td>
-                        <td><a href="eliminarInscripcion/{{r.DNI}}" class="btn btn-danger btnEliminacion">Eliminar</a></td>
+                        <td><a href="edicionInscripcion/{{i.DNI}}" class="btn btn-info">Editar</a></td>
+                        <td><a href="eliminarInscripcion/{{i.DNI}}" class="btn btn-danger btnEliminacion">Eliminar</a></td>
                     </tr>
                     {% endfor %}
                 </tbody>
