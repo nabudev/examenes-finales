@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
 from django.contrib import messages
-from datetime import datetime, date
+from datetime import datetime
 
 def index(request):
     return render(request, 'index.html')
@@ -26,8 +26,8 @@ def registrarInscripcion(request):
 
         # Convertir fecha_str a un objeto datetime
         try:
-            fecha = datetime.strptime(fecha_str, '%dd/%mm/%YYYY').date()
-            fecha_db = fecha.strptime('%Y-%m-%d')  # Convertir a formato YYYY-MM-DD para guardar en la base de datos
+            fecha = datetime.strptime(fecha_str, '%Y-%m-%d').date()
+            #fecha_db = fecha.strftime('%Y-%m-%d')  # Convertir a formato YYYY-MM-DD para guardar en la base de datos
         except ValueError:
             messages.error(request, 'Formato de fecha inválido.')
             return render(request, 'inscripcion.html')
@@ -48,14 +48,14 @@ def registrarInscripcion(request):
 
         # Verificar que existe un examen para la materia y la fecha dada
         try:
-            examen = Examen.objects.get(materia=materia, fecha=fecha_db)
+            examen = Examen.objects.get(materia=materia, fecha=fecha)
         except Examen.DoesNotExist:
             messages.error(request, 'No existe un examen para la materia y fecha proporcionadas.')
             return render(request, 'inscripcion.html')
         
-        if datetime.now() > examen.fecha_limite_inscripcion:
-            messages.error(request, 'La fecha límite de inscripción ha pasado.')
-            return render(request, 'inscripcion.html')
+     #   if datetime.now() > Examen.fecha_limite_inscripcion:
+      #      messages.error(request, 'La fecha límite de inscripción ha pasado.')
+       #     return render(request, 'inscripcion.html')
 
         # Verificar si ya existe una inscripción para este alumno y examen
         if Inscripcion.objects.filter(alumno=alumno, examen=examen).exists():
@@ -63,7 +63,7 @@ def registrarInscripcion(request):
             return redirect('inscripcion.html')
 
         # Crear la inscripción
-        inscripcion = Inscripcion(alumno=alumno, examen=examen, fecha_inscripcion=fecha_db)
+        inscripcion = Inscripcion(alumno=alumno, examen=examen, fecha_inscripcion=fecha)
         inscripcion.save()
         messages.success(request, '¡Examen registrado!')
         return redirect('inscripcion.html')

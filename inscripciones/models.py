@@ -32,10 +32,10 @@ class Materia(models.Model):
 class Examen(models.Model):
     materia = models.ForeignKey(Materia, on_delete=models.CASCADE)
     fecha = models.DateField()
-    fecha_limite_inscripcion = models.DateField()
+    fecha_limite_inscripcion = models.DateTimeField()
     
     def __str__(self):
-        return f'{self.materia} + {self.fecha}'
+        return f'{self.materia} - Fecha: {self.fecha}'
     
 class Inscripcion(models.Model):
     alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE)
