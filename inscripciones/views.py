@@ -122,8 +122,11 @@ def editarInscripcion(request):
             messages.error(request, 'El alumno ya está inscrito en este examen.')
             return redirect('/')
 
-        # Crear la inscripción
-        inscripcion = Inscripcion(alumno=alumno, examen=examen, fecha_inscripcion=fecha)
+        # Actualizar la inscripción
+        inscripcion = Inscripcion.objects.get(alumno,examen,fecha)
+        inscripcion.alumno=alumno
+        inscripcion.examen=examen
+        inscripcion.fecha_inscripcion=fecha
         inscripcion.save()
 
     messages.success(request, '¡Inscripcion actualizada!')
