@@ -118,15 +118,19 @@ def editarInscripcion(request):
             messages.error(request, 'No existe un examen para la materia y fecha proporcionadas.')
             return redirect('/')
         
+        try:
+            inscripcion= Inscripcion.objects.get(alumno=alumno, examen=examen, fecha_inscripcion=fecha)
+        except Inscripcion.DoesNotExist:
+            messages.error(request, 'No existe una inscripcion previa para modificar.')
+            return redirect('/')
+        
         if Inscripcion.objects.filter(alumno=alumno, examen=examen).exists():
             messages.error(request, 'El alumno ya está inscrito en este examen.')
             return redirect('/')
 
         # Actualizar la inscripción
-        inscripcion = Inscripcion.objects.get(alumno,examen,fecha)
-        inscripcion.alumno=alumno
-        inscripcion.examen=examen
-        inscripcion.fecha_inscripcion=fecha
+        inscripcion.examen= examen
+        inscripcion.fecha_inscripcion= fecha
         inscripcion.save()
 
     messages.success(request, '¡Inscripcion actualizada!')
