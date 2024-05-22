@@ -22,7 +22,7 @@ def registrarInscripcion(request):
         # Validar que los campos no estén vacíos
         if not all([DNI, apellido, nombre, materia_nombre, fecha_str]):
             messages.error(request, 'Todos los campos son obligatorios.')
-            return render(request, '/')
+            return redirect('/')
 
         # Convertir fecha_str a un objeto datetime
         try:
@@ -30,28 +30,28 @@ def registrarInscripcion(request):
             #fecha_db = fecha.strftime('%Y-%m-%d')  # Convertir a formato YYYY-MM-DD para guardar en la base de datos
         except ValueError:
             messages.error(request, 'Formato de fecha inválido.')
-            return render(request, '/')
+            return redirect('/')
         
         # Verificar que el alumno existe y los datos coinciden
         try:
             alumno = Alumno.objects.get(DNI=DNI, apellido=apellido, nombre=nombre)
         except Alumno.DoesNotExist:
             messages.error(request, 'El alumno no existe o los datos no coinciden.')
-            return render(request, '/')
+            return redirect('/')
         
         # Verificar que la materia existe
         try:
             materia = Materia.objects.get(nombre=materia_nombre)
         except Materia.DoesNotExist:
             messages.error(request, 'La materia no existe.')
-            return render(request, '/')
+            return redirect('/')
 
         # Verificar que existe un examen para la materia y la fecha dada
         try:
             examen = Examen.objects.get(materia=materia, fecha=fecha)
         except Examen.DoesNotExist:
             messages.error(request, 'No existe un examen para la materia y fecha proporcionadas.')
-            return render(request, '/')
+            return redirect('/')
         
      #   if datetime.now() > Examen.fecha_limite_inscripcion:
       #      messages.error(request, 'La fecha límite de inscripción ha pasado.')
@@ -87,7 +87,7 @@ def editarInscripcion(request):
         
         if not all([DNI, apellido, nombre, materia_nombre, fecha_str]):
             messages.error(request, 'Todos los campos son obligatorios.')
-            return render(request, '/')
+            return redirect('/')
 
         # Convertir fecha_str a un objeto datetime
         try:
@@ -95,28 +95,28 @@ def editarInscripcion(request):
             #fecha_db = fecha.strftime('%Y-%m-%d')  # Convertir a formato YYYY-MM-DD para guardar en la base de datos
         except ValueError:
             messages.error(request, 'Formato de fecha inválido.')
-            return render(request, '/')
+            return redirect('/')
         
         # Verificar que el alumno existe y los datos coinciden
         try:
             alumno = Alumno.objects.get(DNI=DNI, apellido=apellido, nombre=nombre)
         except Alumno.DoesNotExist:
             messages.error(request, 'El alumno no existe o los datos no coinciden.')
-            return render(request, '/')
+            return redirect('/')
         
         # Verificar que la materia existe
         try:
             materia = Materia.objects.get(nombre=materia_nombre)
         except Materia.DoesNotExist:
             messages.error(request, 'La materia no existe.')
-            return render(request, '/')
+            return redirect('/')
 
         # Verificar que existe un examen para la materia y la fecha dada
         try:
             examen = Examen.objects.get(materia=materia, fecha=fecha)
         except Examen.DoesNotExist:
             messages.error(request, 'No existe un examen para la materia y fecha proporcionadas.')
-            return render(request, '/')
+            return redirect('/')
         
         if Inscripcion.objects.filter(alumno=alumno, examen=examen).exists():
             messages.error(request, 'El alumno ya está inscrito en este examen.')
