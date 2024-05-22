@@ -66,15 +66,14 @@ def registrarInscripcion(request):
         inscripcion = Inscripcion(alumno=alumno, examen=examen, fecha_inscripcion=fecha)
         inscripcion.save()
         messages.success(request, '¡Examen registrado!')
-        return redirect('registrarInscripcion/inscripcion.html')
+        return redirect('/')
 
 
 
-def edicionInscripcion(request):
-    inscripcion= Inscripcion.objects.all()
-    alumno = Alumno.objects.all()
-    examen= Examen.objects.all()
-    return render(request, "editarInscripcion.html", {"Inscripcion": inscripcion, 'alumno': alumno, 'examen': examen})
+def edicionInscripcion(request,DNI):
+    alumno = get_object_or_404(Alumno, DNI=DNI)
+    inscripcion= Inscripcion.objects.filter(alumno=alumno)
+    return render(request, "editarInscripcion.html", {"Inscripcion": inscripcion, "alumno":alumno})
 
 
 def editarInscripcion(request):
