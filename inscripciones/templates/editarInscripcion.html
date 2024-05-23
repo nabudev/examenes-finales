@@ -16,7 +16,7 @@
         <h2>Modificar Inscripcion</h2>
         <div class="card">
             <div class="card-body">
-                <form action="/editarInscripcion/" method="POST">{% csrf_token %}
+                <form action="/editarInscripcion/{{inscripcion.id}}" method="POST">{% csrf_token %}
                     <div class="form-group">
                         <input type="text" id="txtDNI" name="txtDNI" value="{{alumno.DNI}}" class="form-control" placeholder="DNI" maxlength="8" readonly required>
                     </div>
