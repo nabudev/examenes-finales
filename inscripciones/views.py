@@ -70,10 +70,14 @@ def registrarInscripcion(request):
 
 
 
-def edicionInscripcion(request,DNI):
+def edicionInscripcion(request, DNI):
     alumno = get_object_or_404(Alumno, DNI=DNI)
     inscripcion= Inscripcion.objects.filter(alumno=alumno)
-    return render(request, "editarInscripcion.html", {"Inscripcion": inscripcion, "alumno":alumno})
+    inscripcion=inscripcion.first()
+    materia=inscripcion.examen.materia.nombre
+    fecha= inscripcion.fecha_inscripcion
+    
+    return render(request, "editarInscripcion.html", {"Inscripcion": inscripcion, "alumno": alumno, "materia": materia, "fecha": fecha})
 
 
 def editarInscripcion(request):
@@ -119,16 +123,14 @@ def editarInscripcion(request):
             return redirect('/')
         
         try:
-            inscripcion= Inscripcion.objects.get(alumno=alumno, examen=examen, fecha_inscripcion=fecha)
+            inscripcion= Inscripcion.objects.get(alumno=alumno, examen=examen)
         except Inscripcion.DoesNotExist:
             messages.error(request, 'No existe una inscripcion previa para modificar.')
             return redirect('/')
         
-        if Inscripcion.objects.filter(alumno=alumno, examen=examen).exists():
-            messages.error(request, 'El alumno ya está inscrito en este examen.')
-            return redirect('/')
 
         # Actualizar la inscripción
+        inscripcion.alumno=alumno
         inscripcion.examen= examen
         inscripcion.fecha_inscripcion= fecha
         inscripcion.save()
