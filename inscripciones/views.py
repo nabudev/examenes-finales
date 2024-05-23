@@ -69,18 +69,17 @@ def registrarInscripcion(request):
         return redirect('/')
 
 
-
-def edicionInscripcion(request, DNI):
+def edicionInscripcion(request,DNI):
     alumno = get_object_or_404(Alumno, DNI=DNI)
-    inscripcion= Inscripcion.objects.filter(alumno=alumno)
-    inscripcion=inscripcion.first()
-    materia=inscripcion.examen.materia.nombre
-    fecha= inscripcion.fecha_inscripcion
-    
-    return render(request, "editarInscripcion.html", {"Inscripcion": inscripcion, "alumno": alumno, "materia": materia, "fecha": fecha})
+    inscripcion = Inscripcion.objects.filter(alumno=alumno).first()
+    materia = Materia.objects.all()
+    fecha = inscripcion.examen.fecha
+
+    return render(request, "editarInscripcion.html", {"inscripcion": inscripcion, "alumno": alumno, "materia": materia, "fecha": fecha})
 
 
-def editarInscripcion(request):
+def editarInscripcion(request, id):
+    inscripcion= get_object_or_404(Inscripcion, id=id)
     if request.method == 'POST':
         # Extraer los datos del formulario enviado
         DNI = request.POST['txtDNI']
@@ -131,14 +130,11 @@ def editarInscripcion(request):
 
         # Actualizar la inscripción
         inscripcion.alumno=alumno
-        inscripcion.examen= examen
-        inscripcion.fecha_inscripcion= fecha
+        inscripcion.examen=examen
+        inscripcion.fecha_inscripcion=fecha
         inscripcion.save()
-
-    messages.success(request, '¡Inscripcion actualizada!')
-
-    return redirect('/')
-
+        messages.success(request, '¡Inscripcion actualizada!')
+        return redirect('/')
 
 def eliminarInscripcion(request, id):
     inscripcion = Inscripcion.objects.get(id=id)
