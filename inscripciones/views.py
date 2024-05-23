@@ -129,9 +129,7 @@ def editarInscripcion(request, id):
         
 
         # Actualizar la inscripción
-        inscripcion.alumno=alumno
-        inscripcion.examen=examen
-        inscripcion.fecha_inscripcion=fecha
+        inscripcion = Inscripcion(alumno=alumno, examen=examen, fecha_inscripcion=fecha)
         inscripcion.save()
         messages.success(request, '¡Inscripcion actualizada!')
         return redirect('/')
