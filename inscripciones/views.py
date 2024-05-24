@@ -79,7 +79,7 @@ def edicionInscripcion(request,DNI):
 
 
 def editarInscripcion(request, id):
-    inscripcion= get_object_or_404(Inscripcion, id=id)
+ #   inscripcion= get_object_or_404(Inscripcion, id=id)
     if request.method == 'POST':
         # Extraer los datos del formulario enviado
         DNI = request.POST['txtDNI']
@@ -129,7 +129,11 @@ def editarInscripcion(request, id):
         
 
         # Actualizar la inscripción
-        inscripcion = Inscripcion(alumno=alumno, examen=examen, fecha_inscripcion=fecha)
+        inscripcion = Inscripcion.objects.get(id=id)
+        inscripcion.alumno.nombre=nombre
+        inscripcion.alumno.apellido=apellido
+        inscripcion.examen.materia.nombre=materia
+        inscripcion.fecha_inscripcion=fecha
         inscripcion.save()
         messages.success(request, '¡Inscripcion actualizada!')
         return redirect('/')

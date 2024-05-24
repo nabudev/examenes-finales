@@ -43,5 +43,5 @@ class Inscripcion(models.Model):
     fecha_inscripcion = models.DateField(auto_now_add=True)
     
     def __str__(self):
-        return f'{self.alumno} + "Examen: " + {self.examen}'
+        return f'Alumno: {self.alumno} - Examen: {self.examen}'
     
