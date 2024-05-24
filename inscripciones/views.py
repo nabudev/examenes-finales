@@ -3,8 +3,6 @@ from .models import *
 from django.contrib import messages
 from datetime import datetime
 
-def index(request):
-    return render(request, 'index.html')
 
 def inscripcion(request):
     inscripcion= Inscripcion.objects.all()
@@ -63,22 +61,18 @@ def registrarInscripcion(request):
             return redirect('/')
 
         # Crear la inscripción
-        inscripcion = Inscripcion(alumno=alumno, examen=examen, fecha_inscripcion=fecha)
+        inscripcion = Inscripcion.objects.create(alumno=alumno, examen=examen, fecha_inscripcion=fecha)
         inscripcion.save()
         messages.success(request, '¡Examen registrado!')
         return redirect('/')
 
 
-def edicionInscripcion(request,DNI):
-    alumno = get_object_or_404(Alumno, DNI=DNI)
-    inscripcion = Inscripcion.objects.filter(alumno=alumno).first()
-    materia = Materia.objects.all()
-    fecha = inscripcion.examen.fecha
-
-    return render(request, "editarInscripcion.html", {"inscripcion": inscripcion, "alumno": alumno, "materia": materia, "fecha": fecha})
+def edicionInscripcion(request,id):
+    inscripcion = Inscripcion.objects.get(id=id)
+    return render(request, "editarInscripcion.html", {"inscripcion": inscripcion})
 
 
-def editarInscripcion(request, id):
+def editarInscripcion(request):
  #   inscripcion= get_object_or_404(Inscripcion, id=id)
     if request.method == 'POST':
         # Extraer los datos del formulario enviado
@@ -122,14 +116,16 @@ def editarInscripcion(request, id):
             return redirect('/')
         
         try:
-            inscripcion= Inscripcion.objects.get(alumno=alumno, examen=examen)
+            inscripcion= Inscripcion.objects.get(alumno=alumno, examen=examen, fecha_inscripcion=fecha)
         except Inscripcion.DoesNotExist:
             messages.error(request, 'No existe una inscripcion previa para modificar.')
             return redirect('/')
         
 
         # Actualizar la inscripción
-        inscripcion = Inscripcion.objects.get(id=id)
+        alumno=get_object_or_404(DNI=DNI)
+        inscripcion = Inscripcion.objects.filter(alumno=alumno)
+        inscripcion = Inscripcion.objects.get()
         inscripcion.alumno.nombre=nombre
         inscripcion.alumno.apellido=apellido
         inscripcion.examen.materia.nombre=materia
