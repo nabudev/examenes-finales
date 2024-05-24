@@ -73,14 +73,15 @@ def edicionInscripcion(request,id):
 
 
 def editarInscripcion(request):
- #   inscripcion= get_object_or_404(Inscripcion, id=id)
     if request.method == 'POST':
         # Extraer los datos del formulario enviado
+        id= request.POST['inscripcion_id']
         DNI = request.POST['txtDNI']
         apellido = request.POST['txtApellido']
         nombre = request.POST['txtNombre']
         materia_nombre = request.POST['txtMateria']
         fecha_str = request.POST['dateFecha']
+        
         
         if not all([DNI, apellido, nombre, materia_nombre, fecha_str]):
             messages.error(request, 'Todos los campos son obligatorios.')
@@ -116,21 +117,18 @@ def editarInscripcion(request):
             return redirect('/')
         
         try:
-            inscripcion= Inscripcion.objects.get(alumno=alumno, examen=examen, fecha_inscripcion=fecha)
+            inscripcion= Inscripcion.objects.get(id=id)
         except Inscripcion.DoesNotExist:
             messages.error(request, 'No existe una inscripcion previa para modificar.')
             return redirect('/')
         
 
         # Actualizar la inscripción
-        alumno=get_object_or_404(DNI=DNI)
-        inscripcion = Inscripcion.objects.filter(alumno=alumno)
-        inscripcion = Inscripcion.objects.get()
-        inscripcion.alumno.nombre=nombre
-        inscripcion.alumno.apellido=apellido
-        inscripcion.examen.materia.nombre=materia
+        inscripcion.alumno= alumno
+        inscripcion.examen= examen 
         inscripcion.fecha_inscripcion=fecha
         inscripcion.save()
+        
         messages.success(request, '¡Inscripcion actualizada!')
         return redirect('/')
 
